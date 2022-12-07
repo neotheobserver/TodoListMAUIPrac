@@ -1,0 +1,74 @@
+﻿@page "/fetchEmployeedata"
+
+@using TodoList.Data;
+@using TodoList.Data.Model
+@inject EmployeeServices EmployeeService
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<h1>Employee Data</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+@if (employees == null)
+{
+	<p><em>Loading...</em></p>
+}
+else
+{
+	<input type="text" @oninput="@((e)=>SearchEmployee((string)e.Value))" placeholder="Enter name to search..." />
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Full Name</th>
+				<th><button @onclick="SortListDes"><i class="fa-solid fa-sort-down"></i></button>Age<button @onclick="SortListAsc"><i class="fa-sharp fa-solid fa-sort-up"></i></button></th>
+				<th>Gender</th>
+				<th>Phone Number</th>
+				<th>Department</th>
+				<th>Hired Date</th>
+				<th>Is Supervisor</th>
+				<th>Is Admin</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var employee in employees)
+			{
+				<tr>
+					<td>@employee.FullName</td>
+					<td>@employee.Age</td>
+					<td>@employee.Gender</td>
+					<td>@employee.PhoneNumber</td>
+					<td>@employee.Department</td>
+					<td>@employee.CreatedAt</td>
+					<td>@employee.isSupervisor</td>
+					<td>@employee.isAdmin</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	private List<EmployeeModels> employees;
+	protected override async Task OnInitializedAsync()
+	{
+		employees =  EmployeeServices.AllEmployees();
+	}
+
+	protected async Task SearchEmployee(string currentName)
+	{
+		Console.WriteLine("This is getting called with name: " + currentName);
+		employees = EmployeeServices.FilterEmployees(currentName);
+	}
+
+	protected async Task SortListAsc()
+	{
+		employees = EmployeeServices.SortList();
+	}
+
+	protected async Task SortListDes()
+	{
+		employees = EmployeeServices.SortListDes();
+	}
+}
+
